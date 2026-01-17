@@ -22,3 +22,17 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
+#def pull data(ticker, start_date, end_date, bar_interval):
+
+    #mapping params to IB compatable params to be able to access data from api and database as it will be saved with IB compatable variables
+
+    #Logic to decide if data already exists
+
+    #logic to split data into saved paritions
+
+    #if else to pull new or old data
+
+    #combine new pulled data and old data or combine differetn segments of old data
+
+
+

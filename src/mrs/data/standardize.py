@@ -14,27 +14,7 @@ def standardize_bars(df: pd.DataFrame, symbol: str, tz: str = "American/New_York
         - timestamp column named 'datetime' or 'date' etc. (controlled via ts_col + fallbacks)
         - symbol coloumn may or may not exist 
     """
-    
-    if df is None or len(df) == 0:
-        return pd.DataFrame(columns=BARS_COLS)
-    
-    out = df.copy()
-
     # Timestamp col normalization
-
-    if ts_col not in out.columns:
-        #common fallbacks
-        for alt in ["datetime", "date", "timestamp", "time"]:
-            if alt in out.columns:
-                out = out.rename(columns={alt: ts_col})
-                break
-    
-    if ts_col not in out.columns:
-        raise ValueError(f"Failed timestamp column. Expected '{ts_col}' or one of datetime/date/timestamp/time")
-    
-    out[ts_col] = pd.to_datetime(out[ts_col], errors="coerce")
-    if out[ts_col].isna().any():
-        pass
 
     # Symbol Normalization
 
@@ -45,7 +25,6 @@ def standardize_bars(df: pd.DataFrame, symbol: str, tz: str = "American/New_York
     # de-dupe + sort (project-wide expectation)
 
     # canonical column order only (drop extra)
-    return out.reindex(columns=BARS_COLS)
 
 def assert_bars_contract(df: pd.DataFrame):
     """
