@@ -7,7 +7,9 @@ def pull_existing_data(ticker, start_date, end_date, bar_interval, base_path, da
 
     
 
-
+    year = out["datetime"].dt.year.astype("int32")
+    month = out["datetime"].dt.month.astype("int8")
+    day = out["datetime"].dt.day.astype("int8")
 
 
     conn = duckdb.connect(database=":memory:")
@@ -21,9 +23,7 @@ def pull_existing_data(ticker, start_date, end_date, bar_interval, base_path, da
 
     out["datetime"] = pd.to_datetime(out["dateime"], utc=True)
     out["bar_interval"] = bar_interval
-    year = out["datetime"].dt.year.astype("int32")
-    month = out["datetime"].dt.month.astype("int8")
-    day = out["datetime"].dt.day.astype("int8")
+    
 
 
 

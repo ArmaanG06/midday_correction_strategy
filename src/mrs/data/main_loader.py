@@ -23,7 +23,7 @@ def pull_data(ticker, start_date, end_date, bar_interval, base_path, data_set="u
     data = pd.DataFrame
     ib = IBFetcher()
     ib.connect_app()
-    date_range = pd.date_range(start=start_date, end=end_date, freq=bar_interval,)
+    date_range = pd.date_range(start=start_date, end=end_date, freq=bar_interval)
     for i in range(len(date_range)):
         df = pull_existing_data(ticker, date_range[i], date_range[i+1], bar_interval, base_path, data_set)
         duration = calculate_duration(start_date, end_date)
@@ -32,7 +32,7 @@ def pull_data(ticker, start_date, end_date, bar_interval, base_path, data_set="u
         data = pd.concat([data, df])
 
     ib.disconnect()
-
+    
     return data
 
 def calculate_duration(start_date, end_date):
