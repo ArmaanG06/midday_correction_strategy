@@ -2,6 +2,8 @@ from ibapi.client import EClient
 from ibapi.wrapper import EWrapper
 from ibapi.contract import Contract
 from ibapi.common import BarData
+import duckdb
+from pathlib import Path
 
 import threading
 import time
@@ -11,13 +13,34 @@ from typing import List, Union
 import json
 from datetime import datetime
 
+from standardize import standardize_bars
+from parition_data import partition_data
+
+def save_to_datalake(partitioned_data, base_path, dataset,  mode: str="append"):
+    conn = duckdb.connect(database=":memory:")
+
+    for (ticker, bar_interval, year, month, day), df in partitioned_data.items():
+        partition_path = (Path(base_path)/f"dataset={dataset}"/f"bar_interval={bar_interval}"/f"ticker={ticker}"/f"year={year}"/f"month={month:02d}"/f"day={day:02d}")
+
+        if partition_path.exists():
+            raise RuntimeError(f"Parition already exists (append-only violation): {partition_path}")
+        partition_path.mkdir(parents=True, exists_ok = False)
+        conn.register("df", df)
+        conn.execute(f"""
+        COPY df
+        TO '{partition_path}'
+        (FORMAT PARQUET);
+        """)
+        conn.unregister("df")
+    conn.close()
+
 class IBFetcher(EWrapper, EClient):
-    def __init__(self):
+    def __init__(self, base_path):
         EClient.__init__(self, self)
         self.data = []
         self.finished = threading.Event()
         self.req_id = 1
-        self.database_path= "XXXX"
+        self.base_path= base_path
 
     def connect_path(self, host="127.0.0.1", port=7496, client_id=1):
         print("Connecting to IB...")
@@ -33,7 +56,7 @@ class IBFetcher(EWrapper, EClient):
         self.disconnect()
         print("Disconnected from IB.")
 
-    def fetch_stock_data(self, stock, duration="2 D", bar_size="1 mins", exchange="SMART/AMEX",sec_type="STK", currency="USD", endDateTime=""):
+    def fetch_stock_data(self, ticker, duration="2 D", bar_size="1 mins", exchange="SMART/AMEX",sec_type="STK", currency="USD", endDateTime="", dataset="us_equities"):
         print("Pulling new data.")
         symbol = symbol.replace('.', '-')
         self.data = []
@@ -63,8 +86,10 @@ class IBFetcher(EWrapper, EClient):
         
         df = pd.DataFrame(self.data, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])
 
-        #Make code to save to database & parquets
-        #call standardizer before saving data to database and returning to client
+
+        partitioned_data = partition_data(df, ticker, bar_size)
+        save_to_datalake(partitioned_data, self.base_path, contract, dataset=dataset)
+    
 
         return df
     
@@ -79,5 +104,6 @@ class IBFetcher(EWrapper, EClient):
     def historicalDataEnd(self, reqId: int, start: str, end: str):
         print(f"Data collection finished for request {reqId}")
         self.finished.set()
+
 
     

@@ -15,6 +15,7 @@ def standardize_bars(df: pd.DataFrame, symbol: str, tz: str = "American/New_York
         - symbol coloumn may or may not exist 
     """
     # Timestamp col normalization
+    
 
     # Symbol Normalization
 
