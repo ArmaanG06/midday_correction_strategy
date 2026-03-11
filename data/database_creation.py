@@ -1,6 +1,6 @@
 from pathlib import Path
 from sqlalchemy import text
-from src.mrs.data.db import get_engine
+from src.mrs.data.database import get_engine
 
 SQL_DIR = Path("data/sql")
 
