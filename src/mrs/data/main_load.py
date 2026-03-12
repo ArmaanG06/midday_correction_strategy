@@ -11,13 +11,13 @@ def load_ib_intraday_data(symbols, duration, bar_size):
     fetcher.connect_app()
 
     try:
-        clean_df = fetcher.fetch_multiple_stock_data(symbols, duration="1 D", bar_size="5 mins")
+        clean_df = fetcher.fetch_multiple_stock_data(symbols, duration, bar_size)
     finally:
         fetcher.disconnect_app()
     
 
     assets = pd.DataFrame([
-        {"symbol": s, "name": None, "asset_type": "equity", "exchange": "SMART"}
+        {"symbol": s, "asset_type": "equity", "exchange": "SMART"}
         for s in clean_df["symbol"].unique()
     ])
 

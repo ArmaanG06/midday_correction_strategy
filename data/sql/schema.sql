@@ -3,7 +3,6 @@ create schema if not exists market_data;
 create table if not exists market_data.assets (
     asset_id bigserial primary key,
     symbol text unique not null,
-    name text,
     asset_type text,
     exchange text,
     created_at timestamptz not null default now()

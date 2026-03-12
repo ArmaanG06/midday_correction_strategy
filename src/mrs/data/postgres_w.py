@@ -22,12 +22,11 @@ def upsert_assets(df: pd.DataFrame):
         )
 
         conn.execute(text("""
-            insert into market_data.assets (symbol, name, asset_type, exchange)
-            select symbol, name, asset_type, exchange
+            insert into market_data.assets (symbol, asset_type, exchange)
+            select symbol, asset_type, exchange
             from market_data.assets_staging
             on conflict (symbol)
             do update set
-                name = excluded.name,
                 asset_type = excluded.asset_type,
                 exchange = excluded.exchange;
         """))
