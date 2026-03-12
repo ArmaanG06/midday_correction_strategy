@@ -5,13 +5,13 @@ from src.mrs.data.postgres_w import upsert_intraday_bars, upsert_assets
 import pandas as pd
 
 
-def load_ib_intraday_data(symbols):
+def load_ib_intraday_data(symbols, duration, bar_size):
 
     fetcher = IBFetcher()
     fetcher.connect_app()
 
     try:
-        clean_df = fetcher.fetch_multiple_stock_data(symbols, duration="4 D", bar_size="15 mins")
+        clean_df = fetcher.fetch_multiple_stock_data(symbols, duration="1 D", bar_size="5 mins")
     finally:
         fetcher.disconnect_app()
     
