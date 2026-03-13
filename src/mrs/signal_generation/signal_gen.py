@@ -1,35 +1,8 @@
 from dataclasses import dataclass
-from src.mrs.data.main_load import load_id_intraday_data  # soon to be added
+from src.mrs.data.main_load import load_id_intraday_data as loader  # soon to be added
 import pandas as pd
 
 COLUMN_NAMES = ["ticker", "timestamp", "entry", "position", "price", "amount"]
-
-params_1m = {
-    "bar_size": 1,
-    "price_inc": 0.05,
-    "vol_inc": 0.05,
-    "entry_time_1": 1,   # hours into session
-    "exit_time_1": 3,
-}
-
-params_5m = {
-    "bar_size": 5,
-    "price_inc": 0.05,
-    "vol_inc": 0.05,
-    "entry_time_1": 1.5,  # hours into session
-    "exit_time_1": 3,
-}
-
-params_15m = {
-    "bar_size": 15,
-    "price_inc": 0.05,
-    "vol_inc": 0.05,
-    "entry_time_1": 0.5,  # hours into session
-    "exit_time_1": 4,
-    "entry_time_2": 3,
-    "exit_time_2": 6,
-}
-
 
 def _build_signal_row(
     ticker: str,
