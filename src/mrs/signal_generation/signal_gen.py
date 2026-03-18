@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from src.mrs.data.main_load import load_id_intraday_data as loader  # soon to be added
+from src.mrs.data.main_load import load_ib_intraday_data as loader  # soon to be added
 import pandas as pd
 
 COLUMN_NAMES = ["ticker", "timestamp", "entry", "position", "price", "amount"]
@@ -155,7 +155,7 @@ def clean_signals(signals_raw: pd.DataFrame) -> pd.DataFrame:
 
 
 def generate_signals(symbol: str, duration: str, bar_size: str, params) -> pd.DataFrame:
-    bars = loader.load(symbol, duration, bar_size)
+    bars = loader(symbol, duration, bar_size)
     signals_raw = generate_signals_from_df(bars, params, "1")
     signals_pure = clean_signals(signals_raw)
     return signals_raw, signals_pure
